@@ -181,13 +181,13 @@ Pragma: no-cache
 }
 ```
 
-| Parameter           | Required/Optional | Description                                                                                                                                                       | Example/Allowed Values                             |
-| ------------------- | ----------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------- |
-| `issued_token_type` | REQUIRED          | Indicates the type of token issued.                                                                                                                               | `urn:ietf:params:oauth:token-type:id-jag`          |
+| Parameter           | Required/Optional | Description                                                                                                                                                              | Example/Allowed Values                             |
+| ------------------- | ----------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | -------------------------------------------------- |
+| `issued_token_type` | REQUIRED          | Indicates the type of token issued.                                                                                                                                      | `urn:ietf:params:oauth:token-type:id-jag`          |
 | `access_token`      | REQUIRED          | The Identity Assertion JWT Authorization Grant. (Note: Token Exchange requires the `access_token` response parameter for historical reasons, not an OAuth access token.) | (JWT string)                                       |
-| `token_type`        | REQUIRED          | The token type.                                                                                                                                                   | `N_A` (because this is not an OAuth access token.) |
-| `scope`             | OPTIONAL/REQUIRED | OPTIONAL if the scope of the issued token is identical to the requested; otherwise REQUIRED. May be fewer scopes than requested.                                  | `scope1 scope2`                                    |
-| `expires_in`        | RECOMMENDED       | The lifetime in seconds of the authorization grant.                                                                                                               | `3600`                                             |
+| `token_type`        | REQUIRED          | The token type.                                                                                                                                                          | `N_A` (because this is not an OAuth access token.) |
+| `scope`             | OPTIONAL/REQUIRED | OPTIONAL if the scope of the issued token is identical to the requested; otherwise REQUIRED. May be fewer scopes than requested.                                         | `scope1 scope2`                                    |
+| `expires_in`        | RECOMMENDED       | The lifetime in seconds of the authorization grant.                                                                                                                      | `3600`                                             |
 
 #### 4.2.1 Error Response
 
