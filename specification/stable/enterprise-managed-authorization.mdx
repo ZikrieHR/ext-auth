@@ -207,17 +207,17 @@ The MCP Client presents the ID-JAG to the Resource Authorization Server's token 
 
 The MCP Client authenticates with its credentials as registered with the Resource Authorization Server.
 
-If the MCP Client has not yet registered with the Resource Authorization Server, then it can do a [Dynamic Client Registration](/specification/draft/basic/authorization#dynamic-client-registration) request at this stage.
+If the MCP Client is not pre-registered with the Resource Authorization Server, then it can use its [Client ID Metadata Document](/specification/2025-11-25/basic/authorization#client-id-metadata-documents) as its client ID, and optionally authenticate using [private_key_jwt](https://www.ietf.org/archive/id/draft-ietf-oauth-client-id-metadata-document-01.html#section-6.2).
 
 An example request may look like this:
 
 ```
 POST /oauth2/token HTTP/1.1
 Host: auth.chat.example
-Authorization: Basic yZS1yYW5kb20tc2VjcmV0v3JOkF0XG5Qx2
 
 grant_type=urn:ietf:params:oauth:grant-type:jwt-bearer
-assertion=eyJhbGciOiJIUzI1NiIsI...
+&assertion=eyJhbGciOiJIUzI1NiIsI...
+&client_id=https://client.example.com/client.json
 ```
 
 ### 5.1 Processing Rules
