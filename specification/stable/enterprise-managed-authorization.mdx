@@ -36,7 +36,7 @@ This profile is an application of the "Identity Assertion JWT Authorization Gran
 The Identity Assertion JWT Authorization Grant follows three steps:
 
 1. Single Sign-On to the MCP Client via OpenID Connect or SAML
-1a. optionally exchange the SAML assertion for a Refresh Token
+   1a. optionally exchange the SAML assertion for a Refresh Token
 2. Token Exchange ([RFC8693](https://datatracker.ietf.org/doc/html/rfc8693))
 3. JWT Authorization Grant ([RFC7523](https://datatracker.ietf.org/doc/html/rfc7523))
 
@@ -44,7 +44,7 @@ The core flow is as follows:
 
 - A user logs in to an MCP Client through their enterprise Identity Provider, resulting in an Identity Assertion (ID Token or SAML assertion) being issued to the MCP Client.
 - For SAML:
-    - The MCP Client sends a Token Exchange request to the Identity Provider with the SAML assertion, and obtains a Refresh Token.
+  - The MCP Client sends a Token Exchange request to the Identity Provider with the SAML assertion, and obtains a Refresh Token.
 - The MCP Client sends a Token Exchange [[RFC8693](https://datatracker.ietf.org/doc/html/rfc8693)] request to the Identity Provider including the ID Token or Refresh Token, and the identifier of the MCP Server it is attempting to access, and obtains a Identity Assertion JWT Authorization Grant (ID-JAG).
 - The MCP Client uses the Identity Assertion JWT Authorization Grant as a JWT Authorization Grant [[RFC7523](https://datatracker.ietf.org/doc/html/rfc7523)] to request an access token from the Resource Authorization Server.
 - The Resource Authorization Server validates the Identity Assertion JWT Authorization Grant and, if valid, issues an access token.
@@ -150,6 +150,7 @@ grant_type=urn:ietf:params:oauth:grant-type:token-exchange
 ```
 
 If the client uses SAML for single sign-on to the IdP, see [Section 4.5](https://www.ietf.org/archive/id/draft-ietf-oauth-identity-assertion-authz-grant-04.html#section-4.5) for details on how the client can exchange the SAML assertion for a refresh token, then use the refresh token to request an ID-JAG.
+
 ### 4.1 Processing Rules
 
 The IdP processes the request according to [Section 4.3.3 of draft-ietf-oauth-identity-assertion-authz-grant](https://www.ietf.org/archive/id/draft-ietf-oauth-identity-assertion-authz-grant-04.html#section-4.3.3). The IdP evaluates administrator-defined policies for the token exchange request and determines if the MCP Client should be granted access to act on behalf of the user for the target MCP Server and scopes.
@@ -257,7 +258,6 @@ An MCP Client can determine that a Resource Authorization Server supports this p
 ### 7.1 Client Registration
 
 In most enterprise deployments, the IdP policy will only allow users to sign in to pre-registered clients. The MCP client will likely need to be pre-registered with the enterprise IdP for single sign-on.
-
 
 See [Section 5 of draft-ietf-oauth-identity-assertion-authz-grant](https://www.ietf.org/archive/id/draft-ietf-oauth-identity-assertion-authz-grant-04.html#section-5) for how the IdP determines the `client_id` value to include in the ID-JAG.
 
