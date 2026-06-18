@@ -36,13 +36,16 @@ This profile is an application of the "Identity Assertion JWT Authorization Gran
 The Identity Assertion JWT Authorization Grant follows three steps:
 
 1. Single Sign-On to the MCP Client via OpenID Connect or SAML
+1a. optionally exchange the SAML assertion for a Refresh Token
 2. Token Exchange ([RFC8693](https://datatracker.ietf.org/doc/html/rfc8693))
 3. JWT Authorization Grant ([RFC7523](https://datatracker.ietf.org/doc/html/rfc7523))
 
 The core flow is as follows:
 
 - A user logs in to an MCP Client through their enterprise Identity Provider, resulting in an Identity Assertion (ID Token or SAML assertion) being issued to the MCP Client.
-- The MCP Client sends a Token Exchange [[RFC8693](https://datatracker.ietf.org/doc/html/rfc8693)] request to the Identity Provider including the identity assertion and identifier of the MCP Server it is attempting to access, and obtains a Identity Assertion JWT Authorization Grant (ID-JAG).
+- For SAML:
+    - The MCP Client sends a Token Exchange request to the Identity Provider with the SAML assertion, and obtains a Refresh Token.
+- The MCP Client sends a Token Exchange [[RFC8693](https://datatracker.ietf.org/doc/html/rfc8693)] request to the Identity Provider including the ID Token or Refresh Token, and the identifier of the MCP Server it is attempting to access, and obtains a Identity Assertion JWT Authorization Grant (ID-JAG).
 - The MCP Client uses the Identity Assertion JWT Authorization Grant as a JWT Authorization Grant [[RFC7523](https://datatracker.ietf.org/doc/html/rfc7523)] to request an access token from the Resource Authorization Server.
 - The Resource Authorization Server validates the Identity Assertion JWT Authorization Grant and, if valid, issues an access token.
 - The MCP Client uses the access token to make requests to the MCP Server.
@@ -124,7 +127,7 @@ To request an ID-JAG, the MCP Client makes a Token Exchange request to the IdP's
 In this profile:
 
 - `audience` **MUST** be the issuer identifier of the Resource Authorization Server.
-- `resource` is **REQUIRED** and **MUST** be the Resource Identifier of the MCP Server as defined in [RFC9728](https://datatracker.ietf.org/doc/html/rfc9728).
+- `resource` is **OPTIONAL** and if set, **MUST** be the Resource Identifier of the MCP Server as defined in [RFC9728](https://datatracker.ietf.org/doc/html/rfc9728).
 
 If the IdP requires client authentication when the MCP Client performs OpenID Connect for single sign-on, then client authentication of the Token Exchange request is also required.
 
@@ -146,6 +149,7 @@ grant_type=urn:ietf:params:oauth:grant-type:token-exchange
 &client_secret=a26d84873504215a34a86d52ef5cd64f4b76
 ```
 
+If the client uses SAML for single sign-on to the IdP, see [Section 4.5](https://www.ietf.org/archive/id/draft-ietf-oauth-identity-assertion-authz-grant-04.html#section-4.5) for details on how the client can exchange the SAML assertion for a refresh token, then use the refresh token to request an ID-JAG.
 ### 4.1 Processing Rules
 
 The IdP processes the request according to [Section 4.3.3 of draft-ietf-oauth-identity-assertion-authz-grant](https://www.ietf.org/archive/id/draft-ietf-oauth-identity-assertion-authz-grant-04.html#section-4.3.3). The IdP evaluates administrator-defined policies for the token exchange request and determines if the MCP Client should be granted access to act on behalf of the user for the target MCP Server and scopes.
@@ -175,7 +179,7 @@ Error responses are returned as OAuth 2.0 Token Error responses per [Section 5.2
 
 The ID-JAG is a JWT issued and signed by the IdP with the claims defined in [Section 3.1 of draft-ietf-oauth-identity-assertion-authz-grant](https://www.ietf.org/archive/id/draft-ietf-oauth-identity-assertion-authz-grant-04.html#section-3.1).
 
-In this profile, the `resource` claim is **REQUIRED** and **MUST** contain the Resource Identifier of the MCP Server.
+In this profile, the `resource` claim **MUST** contain the Resource Identifier of the MCP Server if present.
 
 An example JWT shown with expanded header and payload claims may look like this:
 
@@ -188,6 +192,7 @@ An example JWT shown with expanded header and payload claims may look like this:
   "jti": "9e43f81b64a33f20116179",
   "iss": "https://acme.idp.example",
   "sub": "U019488227",
+  "email": "user@example.com",
   "aud": "https://auth.chat.example/",
   "resource": "https://mcp.chat.example/",
   "client_id": "f53f191f9311af35",
@@ -253,13 +258,12 @@ An MCP Client can determine that a Resource Authorization Server supports this p
 
 In most enterprise deployments, the IdP policy will only allow users to sign in to pre-registered clients. The MCP client will likely need to be pre-registered with the enterprise IdP for single sign-on.
 
-It is also assumed that the MCP client will be pre-registered with the Resource Authorization Server.
 
 See [Section 5 of draft-ietf-oauth-identity-assertion-authz-grant](https://www.ietf.org/archive/id/draft-ietf-oauth-identity-assertion-authz-grant-04.html#section-5) for how the IdP determines the `client_id` value to include in the ID-JAG.
 
 ### 7.2 Scope of Enterprise Visibility and Policy Enforcement
 
-This specification enables the enterprise IdP to be part of the issuance of the access token at the MCP Server. The visibility the IdP has between the MCP Client and MCP Server is limited to the process of issuing the access token, but does not extend to the actual API calls between the MCP Client and Server.
+This specification enables the enterprise IdP to be part of the issuance of the access token at the MCP Server. The visibility the IdP has between the MCP Client and MCP Server is limited to the process of issuing the access token, but does not extend to the actual MCP traffic between the MCP Client and Server.
 
 This enables the enterprise IdP to enforce policies such as which users in the organization can use certain MCP clients with certain MCP servers. Depending on the granularity of the OAuth scopes defined at the MCP server, this can also extend to govern which scopes a given user can request.
 
